@@ -1581,6 +1581,31 @@ public class ChainClient {
         return response.getVersion();
     }
 
+    // ### 9.2 获取链版本
+    public String getChannelTest(long timeout) throws ChainClientException {
+        RpcServiceClient rpcServiceClient = connectionPool.getConnection();
+        if (rpcServiceClient == null) {
+            logger.error("all connections no Idle or Ready");
+            throw new ChainClientException("all connections no Idle or Ready, please reSet connection count");
+        }
+
+        ChainMakerVersionResponse response;
+        ChainMakerVersionRequest.Builder chainMakerVersionRequest = ChainMakerVersionRequest.newBuilder();
+
+        try {
+            response = rpcServiceClient.getRpcNodeFutureStub().getChainMakerVersion(chainMakerVersionRequest.build()).get(timeout, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            logger.error("connect to peer error : ", e);
+            throw new ChainClientException("connect to peer error : " + e.getMessage());
+        }
+
+        if (response.getCode() != SUCCESS) {
+            logger.error("get chain version failed : " + response.getMessage());
+            throw new ChainClientException("get chain version failed : " + response.getMessage());
+        }
+        return response.getVersion();
+    }
+
     // ### 9.3 更新链配置
     public CheckNewBlockChainConfigResponse checkNewBlockChainConfig(long timeout) throws ChainClientException {
         RpcServiceClient rpcServiceClient = connectionPool.getConnection();

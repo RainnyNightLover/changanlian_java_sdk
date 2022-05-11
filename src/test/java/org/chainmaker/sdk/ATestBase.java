@@ -8,6 +8,7 @@ package org.chainmaker.sdk;
 
 import org.chainmaker.sdk.config.*;
 import org.chainmaker.sdk.utils.FileUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -105,15 +106,22 @@ public class ATestBase {
         if (chainClient == null) {
             chainClient = chainManager.createChainClient(sdkConfig);
         }
+
+        try {
+            chainClient.getChannelTest(10);
+        } catch (Exception e) {
+            Assert.assertNull(e);
+        }
+
     }
 
     @Test
-    public void run(){
+    public void run() {
         System.out.println("test started!");
         try {
-            TimeUnit.SECONDS.sleep(30);
+            TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Assert.assertNull(e);
         }
         System.out.println("test finished!");
     }
