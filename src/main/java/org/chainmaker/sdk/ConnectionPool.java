@@ -18,7 +18,7 @@ public class ConnectionPool {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectionPool.class);
 
-    private  List<RpcServiceClient> rpcServiceClients;
+    private List<RpcServiceClient> rpcServiceClients;
     // user's private key used to tls
     private PrivateKey privateKey;
     // user's certificate
@@ -80,8 +80,10 @@ public class ConnectionPool {
             } catch (InterruptedException e) {
                 logger.error("Thread sleep error : ", e);
             }
+            logger.info("get connection failed!");
         }
         //如果重试后还未获得，则提示重置连接数
+        logger.info("yangxing there is no connection!");
         return null;
     }
 

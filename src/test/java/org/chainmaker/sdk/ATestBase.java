@@ -16,8 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class TestBaseA {
+public class ATestBase {
 
     static String ORG1_CERT_PATH = "crypto-config/wx-org1.chainmaker.org/ca/ca.crt";
     static String CLIENT1_TLS_KEY_PATH = "crypto-config/wx-org1.chainmaker.org/user/client1/client1.tls.key";
@@ -76,7 +77,7 @@ public class TestBaseA {
         //通过sdk_config.yaml配置文件创建
         //如果不想通过配置文件设置参数，可自定义SdkConfig对象，设置SdkConfig中各个属性，参考initWithNoConfig
         Yaml yaml = new Yaml();
-        InputStream in = TestBaseA.class.getClassLoader().getResourceAsStream(SDK_CONFIG);
+        InputStream in = ATestBase.class.getClassLoader().getResourceAsStream(SDK_CONFIG);
 
         SdkConfig sdkConfig;
         sdkConfig = yaml.loadAs(in, SdkConfig.class);
@@ -103,43 +104,18 @@ public class TestBaseA {
 
         if (chainClient == null) {
             chainClient = chainManager.createChainClient(sdkConfig);
-            System.out.println("hello");
-            System.out.println(chainClient);
         }
-        System.out.println("hello");
-
-        //公钥模式下，多签用户
-//        adminUser1 = new User(ORG_ID1);
-//        adminUser1.setAuthType(AuthType.Public.getMsg());
-//        adminUser1.setPriBytes(FileUtils.getResourceFileBytes(ADMIN1_PK_PATH));
-//
-//        adminUser2 = new User(ORG_ID2);
-//        adminUser2.setAuthType(AuthType.Public.getMsg());
-//        adminUser2.setPriBytes(FileUtils.getResourceFileBytes(ADMIN2_PK_PATH));
-//
-//        adminUser3 = new User(ORG_ID3);
-//        adminUser3.setAuthType(AuthType.Public.getMsg());
-//        adminUser3.setPriBytes(FileUtils.getResourceFileBytes(ADMIN3_PK_PATH));
-
-      /*  adminUser1 = new User(ORG_ID1, FileUtils.getResourceFileBytes(ADMIN1_KEY_PATH),
-                FileUtils.getResourceFileBytes(ADMIN1_CERT_PATH),
-                FileUtils.getResourceFileBytes(ADMIN1_TLS_KEY_PATH),
-                FileUtils.getResourceFileBytes(ADMIN1_TLS_CERT_PATH));
-
-        adminUser2 = new User(ORG_ID2, FileUtils.getResourceFileBytes(ADMIN2_KEY_PATH),
-                FileUtils.getResourceFileBytes(ADMIN2_CERT_PATH),
-                FileUtils.getResourceFileBytes(ADMIN2_TLS_KEY_PATH),
-                FileUtils.getResourceFileBytes(ADMIN2_TLS_CERT_PATH));
-
-        adminUser3 = new User(ORG_ID3, FileUtils.getResourceFileBytes(ADMIN3_KEY_PATH),
-                FileUtils.getResourceFileBytes(ADMIN3_CERT_PATH),
-                FileUtils.getResourceFileBytes(ADMIN3_TLS_KEY_PATH),
-                FileUtils.getResourceFileBytes(ADMIN3_TLS_CERT_PATH));*/
     }
 
     @Test
     public void run(){
-        System.out.println("test");
+        System.out.println("test started!");
+        try {
+            TimeUnit.SECONDS.sleep(30);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("test finished!");
     }
 }
 

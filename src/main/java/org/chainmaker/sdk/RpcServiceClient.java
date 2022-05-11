@@ -150,7 +150,7 @@ public class RpcServiceClient {
             ArrayList<X509Certificate> x509CertificateList = new ArrayList<>();
             for (int i = 0; i < node.getTlsCertBytes().length; i++) {
                 X509Certificate x509Certificate =
-                        (X509Certificate)certFactory.generateCertificate(new ByteArrayInputStream(node.getTlsCertBytes()[i]));
+                        (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(node.getTlsCertBytes()[i]));
                 x509CertificateList.add(x509Certificate);
             }
 
@@ -200,6 +200,14 @@ public class RpcServiceClient {
         return ret;
     }
 
+    /**
+     * yangxing used for build the safe connection things
+     *
+     * @param clientCert
+     * @param clientKey
+     * @param sslprovider
+     * @return
+     */
     private static SslContextBuilder getSslContextBuilder(X509Certificate[] clientCert, PrivateKey clientKey, SslProvider sslprovider) {
         SslContextBuilder clientContextBuilder = GrpcSslContexts.configure(SslContextBuilder.forClient(), sslprovider);
         if (clientKey != null && clientCert != null) {
