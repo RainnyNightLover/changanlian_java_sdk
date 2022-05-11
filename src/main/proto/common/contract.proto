@@ -1,0 +1,71 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) THL A29 Limited, a Tencent company. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
+syntax = "proto3";
+
+option java_package = "org.chainmaker.pb.common";
+option go_package = "chainmaker.org/chainmaker/pb-go/v2/common";
+
+package common;
+
+import "accesscontrol/member.proto";
+
+message Contract {
+    // smart contract name, set by contract creator, can have multiple versions
+    string name = 1;
+
+    // smart contract version, set by contract creator, name + version should be unique
+    string version = 2;
+
+    // smart contract runtime type, set by contract creator
+    RuntimeType runtime_type = 3;
+
+    //contract status
+    ContractStatus status = 4;
+
+    //contract creator identity
+    accesscontrol.MemberFull creator = 5;
+}
+
+
+// smart contract runtime, contains vm type and language type
+enum RuntimeType {
+    INVALID = 0;
+
+    // native implement in chainmaker-go
+    NATIVE = 1;
+
+    // vm-wasmer, language-c++
+    WASMER = 2;
+
+    // vm-wxvm, language-cpp
+    WXVM = 3;
+
+    // wasm interpreter in go
+    GASM = 4;
+
+    // vm-evm
+    EVM = 5;
+
+    // vm-docker, language-golang
+    DOCKER_GO = 6;
+
+    // vm-docker, language-java
+    DOCKER_JAVA = 7;
+}
+
+// current contract status
+enum ContractStatus {
+    // normal, can be invoked
+    NORMAL = 0;
+
+    // frozen, cannot be invoked temporarily
+    FROZEN = 1;
+
+    // revoked, cannot be invoked permanently
+    REVOKED = 2;
+}

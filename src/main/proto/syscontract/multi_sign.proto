@@ -1,0 +1,99 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) THL A29 Limited, a Tencent company. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
+syntax = "proto3";
+import "common/request.proto";
+
+option java_package = "org.chainmaker.pb.syscontract";
+option go_package = "chainmaker.org/chainmaker/pb-go/v2/syscontract";
+
+package syscontract;
+
+// methods of managing multi signature
+enum MultiSignFunction {
+  // multi signature request
+  REQ = 0;
+
+  // multi signature voting
+  VOTE = 1;
+
+  // multi signature query
+  QUERY = 2;
+}
+
+message MultiSignInfo {
+  // current tx payload
+  common.Payload payload = 1;
+  // call system contract name
+  string contract_name = 2;
+  // call system contract method
+  string method = 3;
+  // call system contract parameters
+  //repeated common.KeyValuePair parameters = 4;
+  // status
+  MultiSignStatus status = 4;
+  // vote list
+  repeated MultiSignVoteInfo vote_infos = 5;
+  //call system contract message
+  string message = 6;
+  //call system contract result
+  bytes result = 7;
+}
+
+message MultiSignVoteInfo {
+  VoteStatus vote = 1;
+  common.EndorsementEntry endorsement = 2;
+}
+
+enum VoteStatus {
+  AGREE = 0;
+  REJECT = 1;
+}
+
+// smart contract runtime, contains vm type and language type
+enum MultiSignStatus {
+  PROCESSING = 0;
+  ADOPTED = 1;
+  REFUSED = 2;
+  FAILED = 3;
+}
+
+// current contract status
+enum ContractStatus {
+  // normal, can be invoked
+  NORMAL = 0;
+
+  // frozen, cannot be invoked temporarily
+  FROZEN = 1;
+
+  // revoked, cannot be invoked permanently
+  REVOKED = 2;
+}
+
+
+// revoke contract parameters
+message MultiReq {
+  enum Parameter {
+    SYS_CONTRACT_NAME = 0;
+    SYS_METHOD = 1;
+  }
+}
+
+// revoke contract parameters
+message MultiVote {
+  enum Parameter {
+    VOTE_INFO = 0;
+    TX_ID = 1;
+  }
+}
+
+// revoke contract parameters
+message MultiQuery {
+  enum Parameter {
+    TX_ID = 0;
+  }
+}

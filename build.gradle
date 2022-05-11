@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+    id 'com.google.protobuf' version '0.8.14'
+}
+
+group 'org.chainmaker'
+version '2.2.0'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.9.0'
+    }
+
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.25.0'
+        }
+    }
+
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+dependencies {
+    implementation 'commons-collections:commons-collections:3.2.2'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.62'
+    implementation 'io.netty:netty-handler:4.1.53.Final'
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'com.alibaba:fastjson:1.2.62'
+    implementation 'commons-logging:commons-logging:1.2'
+    implementation 'com.google.protobuf:protobuf-java-util:3.2.0'
+    implementation 'io.grpc:grpc-api:1.23.0'
+    implementation 'io.grpc:grpc-netty:1.23.0'
+    implementation 'io.grpc:grpc-stub:1.23.0'
+    implementation 'io.grpc:grpc-protobuf:1.23.0'
+    implementation 'org.web3j:abi:5.0.0'
+    implementation 'mysql:mysql-connector-java:8.0.21'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'org.yaml:snakeyaml:1.29'
+    implementation 'com.esotericsoftware.yamlbeans:yamlbeans:1.15'
+    implementation 'net.java.dev.jna:jna:5.6.0'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compile fileTree(dir:'lib',includes:['*jar'])
+}
+
+test {
+    filter {
+//        includeTestsMatching '*'
+    }
+    useJUnitPlatform()
+}

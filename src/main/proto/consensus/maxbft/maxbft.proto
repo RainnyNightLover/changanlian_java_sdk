@@ -1,0 +1,179 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) THL A29 Limited, a Tencent company. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
+syntax = "proto3";
+
+option java_package = "org.chainmaker.pb.consensus.maxbft";
+option go_package = "chainmaker.org/chainmaker/pb-go/v2/consensus/maxbft";
+package maxbft;
+
+import "common/block.proto";
+import "common/request.proto";
+
+message QuorumCert {
+    // block id of the qc block
+    bytes        block_id = 1;
+    // block height of the qc block
+    uint64       height = 2;
+    // consensus level of the qc block
+    uint64       level = 3;
+    // Whether to vote timeout of the qc block
+    bool         new_view = 4;
+    // the id of the epoch
+    uint64       epoch_id = 5;
+    repeated VoteData votes = 6;
+}
+
+message ConsensusInfo {
+    // block's qc info
+    QuorumCert    qc = 1;
+}
+
+message SyncInfo {
+    // highest qc of the vote node
+    QuorumCert highest_qc = 1;
+    // highest tc of the vote node
+    QuorumCert highest_tc = 2;
+    // Latest timeout consensus level
+    uint64     highest_tc_level = 3;
+}
+
+message ProposalData {
+    // block info of the proposal
+    common.Block      block = 1;
+    // height of the proposal
+    uint64            height = 2;
+    // consensus level of the proposal
+    uint64            level = 3;
+    // proposer of the proposal
+    bytes             proposer = 4;
+    // index of the proposer in consensus nodes
+    uint64            proposer_idx = 5;
+    // the id of the epoch
+    uint64            epoch_id = 6;
+    // the qc info of the parent's block in the proposal
+    QuorumCert        justify_qc = 7;  //QC for parent block
+}
+
+message ProposalMsg {
+    // proposal data
+    ProposalData     proposal_data = 1;
+    // qc info of the propose node
+    SyncInfo         sync_info = 2;
+}
+
+message VoteData {
+    // block id of the vote block
+    bytes           block_id = 1;
+    // block height of the vote block
+    uint64          height = 2;
+    // consensus level of the vote block
+    uint64          level = 3;
+    // voter of the voteInfo
+    bytes           author = 4;
+    // index of the voter in consensus nodes
+    uint64          author_idx = 5;
+    // Whether to vote timeout of the block
+    bool            new_view = 6;
+    // the id of the epoch
+    uint64          epoch_id = 7;
+    // signature of the vote
+    common.EndorsementEntry   signature = 8;
+}
+
+message VoteMsg {
+    // data of the vote
+    VoteData       vote_data = 1;
+    // qc info in the vote
+    SyncInfo       sync_info = 2;
+}
+
+message BlockFetchMsg {
+    // block id of the latest know block in request node
+    bytes         block_id = 1;
+    // block height of the latest know block in request node
+    uint64        height = 2;
+    // fetch block num
+    uint64        num_blocks = 3;
+    // index of the request node;
+    uint64        author_idx = 4;
+    // unique id of the request
+    uint64        req_id = 5;
+    // id of the commit block in request node
+    bytes         commit_block = 6;
+    // id of the locked block in request node
+    bytes 	      locked_bLock = 7;
+}
+
+message BlockPair {
+    common.Block    block = 1;
+    QuorumCert      qc = 2;
+}
+
+// response status
+enum BlockFetchStatus {
+    SUCCEEDED = 0;
+    NOT_ENOUGH_BLOCKS = 1;
+}
+
+message BlockFetchRespMsg {
+    // response status
+    BlockFetchStatus status = 1;
+    // block in response
+    repeated BlockPair blocks = 2;
+    // index of the response node
+    uint64     author_idx = 3;
+    // unique id of the response which is the request id
+    uint64     resp_id = 4;
+}
+
+enum ConsStateType {
+    // new height
+    NEW_HEIGHT = 0;
+    // new level
+    NEW_LEVEL = 1;
+    // propose
+    PROPOSE = 2;
+    // vote
+    VOTE = 3;
+    // pacemaker of the consensus
+    PACEMAKER = 4;
+}
+
+enum MessageType {
+    PROPOSAL_MESSAGE = 0;
+    VOTE_MESSAGE = 1;
+    BLOCK_FETCH_MESSAGE = 2;
+    BLOCK_FETCH_RESP_MESSAGE = 3;
+}
+
+message ConsensusPayload {
+    MessageType type = 1;
+    oneof data {
+        ProposalMsg proposal_msg = 2;
+        VoteMsg     vote_msg = 3;
+        BlockFetchMsg block_fetch_msg = 4;
+        BlockFetchRespMsg block_fetch_resp_msg = 5;
+    }
+}
+
+message ConsensusMsg {
+    ConsensusPayload payload = 1;
+    common.EndorsementEntry sign_entry = 2;
+}
+
+message BuildProposal {
+    uint64 height = 1;
+    bytes  pre_hash = 2;
+    bool   is_proposer = 3;
+}
+
+message WalEntry{
+    ConsensusMsg msg = 1;
+    MessageType msg_type = 2;
+    uint64 last_snapshot_index = 3;
+}

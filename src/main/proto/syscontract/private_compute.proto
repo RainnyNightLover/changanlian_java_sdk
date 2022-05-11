@@ -1,0 +1,101 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) THL A29 Limited, a Tencent company. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
+syntax = "proto3";
+
+option java_package = "org.chainmaker.pb.syscontract";
+option go_package = "chainmaker.org/chainmaker/pb-go/v2/syscontract";
+
+package syscontract;
+
+// methods of private compute contract
+enum PrivateComputeFunction {
+    // get contract code
+    GET_CONTRACT = 0;
+
+    // get private data
+    GET_DATA = 1;
+
+    // save cert of tee
+    SAVE_CA_CERT = 2;
+
+    // save private data dir
+    SAVE_DIR = 3;
+
+    // save data of private computation result
+    SAVE_DATA = 4;
+
+    //save enclave report
+    SAVE_ENCLAVE_REPORT = 5;
+
+    //get enclave proof
+    GET_ENCLAVE_PROOF = 6;
+
+    //get cert of tee
+    GET_CA_CERT = 7;
+
+    //get private data dir
+    GET_DIR = 8;
+
+    //check caller cert auth
+    CHECK_CALLER_CERT_AUTH = 9;
+
+    GET_ENCLAVE_ENCRYPT_PUB_KEY = 10;
+    GET_ENCLAVE_VERIFICATION_PUB_KEY = 11;
+    GET_ENCLAVE_REPORT = 12;
+    GET_ENCLAVE_CHALLENGE = 13;
+    GET_ENCLAVE_SIGNATURE = 14;
+    SAVE_REMOTE_ATTESTATION = 15;
+}
+
+message RemoteAttestationRequest {
+    repeated SignInfo sign_pair = 1;
+    RemoteAttestationPayload payload = 2;
+}
+
+message RemoteAttestationPayload {
+    string challenge = 1;
+    repeated string org_id = 2;
+}
+
+message PrivateDeployRequest {
+    repeated SignInfo sign_pair = 1;
+    PrivateDeployPayload payload = 2;
+}
+
+message PrivateDeployPayload {
+    string code_bytes = 1;
+    // deploy args which is packed by abi
+    string private_rlp_data = 2;
+    string passwd = 3;
+    string sig_algo = 4;
+    string contract_name = 5;
+    string contract_version = 6;
+    string code_hash = 7;
+    repeated string org_id = 8;
+    string time_stamp = 9;
+}
+
+message PrivateComputeRequest {
+    repeated SignInfo sign_pair = 1;
+    PrivateComputePayload  payload = 2;
+}
+
+message PrivateComputePayload {
+    string private_rlp_data = 1;
+    string passwd = 2;
+    string sig_algo = 3;
+    string contract_name = 4;
+    string code_hash = 5;
+    repeated string org_id = 6;
+    string time_stamp = 7;
+}
+
+message SignInfo {
+    string client_sign = 1;
+    string cert = 2;
+}

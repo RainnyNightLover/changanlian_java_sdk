@@ -1,0 +1,64 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) THL A29 Limited, a Tencent company. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
+syntax = "proto3";
+
+option java_package = "org.chainmaker.pb.syscontract";
+option go_package   = "chainmaker.org/chainmaker/pb-go/v2/syscontract";
+
+package syscontract;
+
+enum CrossTransactionFunction {
+    // transaction execute
+    EXECUTE = 0;
+    // transaction commit
+    COMMIT = 1;
+    // transaction rollback
+    ROLLBACK = 2;
+    // read cross id state
+    READ_STATE = 3;
+    // save cross other transaction proof
+    SAVE_PROOF = 4;
+    // read cross other transaction proof
+    READ_PROOF = 5;
+    // arbitrate the cross transaction
+    ARBITRATE = 6;
+}
+
+enum CrossTxState {
+    //NON_EXIST cross id is not exist
+    NON_EXIST = 0;
+    //INIT just mark this cross is has been processed
+    INIT = 1;
+    //EXECUTE_OK cross tx execute successfully
+    EXECUTE_OK = 2;
+    //EXECUTE_FAIL cross tx execute fail
+    EXECUTE_FAIL = 3;
+    //COMMIT_OK cross tx commit successfully
+    COMMIT_OK = 4;
+    //COMMIT_FAIL cross tx commit fail
+    COMMIT_FAIL = 5;
+    //ROLLBACK_OK cross tx rollback successfully
+    ROLLBACK_OK = 6;
+    //ROLLBACK_FAIL cross tx rollback fail
+    ROLLBACK_FAIL = 7;
+}
+
+enum CrossArbitrateCmd {
+    //AUTO_CMD automatic processing according to the process
+    AUTO_CMD = 0;
+    //EXECUTE_CMD execute the execution flow
+    EXECUTE_CMD = 1;
+    //COMMIT_CMD execute the commit flow
+    COMMIT_CMD = 2;
+    //COMMIT_CMD execute the rollback flow
+    ROLLBACK_CMD = 3;
+}
+
+message CrossState {
+    CrossTxState state = 1;
+}

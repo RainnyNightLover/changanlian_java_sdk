@@ -1,0 +1,79 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) THL A29 Limited, a Tencent company. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
+syntax = "proto3";
+
+option java_package = "org.chainmaker.pb.tee";
+option go_package = "chainmaker.org/chainmaker/pb-go/tee";
+
+import "common/request.proto";
+import "common/result.proto";
+import "common/rwset.proto";
+
+package tee;
+
+service EnclaveServer {
+
+  // Init Enclave (optional):
+  // 1. Generate and return report.
+  // 2. Generate private key and return public key (RSA & ECC).
+  // 3. Generate and return csr. (Cert will be put into trusted files later)
+  rpc InitEnclave(InitEnclaveRequest) returns(InitEnclaveResponse) {}
+
+  // Deploy contract.
+  rpc DeployContract(common.TxRequest) returns(EnclaveResponse) {}
+
+  // Invoke contract.
+  rpc InvokeContract(common.TxRequest) returns(EnclaveResponse) {}
+
+  // Remote attestation prove
+  rpc RemoteAttestationProve(RemoteAttestationRequest) returns(RemoteAttestationResponse) {}
+}
+
+message InitEnclaveRequest {
+  // Sign algorithm of TEE
+  string tee_cert_sign_alg = 1;
+  // Encrypt algorithm of TEE
+  string tee_encrypt_alg = 2;
+}
+
+message InitEnclaveResponse {
+  bytes tee_report = 1;
+  bytes tee_pubkey = 2;
+  bytes tee_csr    = 3;
+}
+
+message EnclaveResponse {
+  EnclaveResponsePayload enclave_response_payload = 1;
+  bytes signature = 2;
+}
+
+message EnclaveResponsePayload {
+  common.ContractResult contract_result = 1;
+  common.TxRWSet tx_rwset = 2;
+  common.TxRequest tx_request = 3;
+  string contract_name = 4;
+  string contract_version = 5;
+  string contract_hash = 6;
+  string report_hash = 7;
+}
+
+message RemoteAttestationRequest {
+  string          challenge = 1;
+}
+
+message RemoteAttestationResponse {
+  RemoteAttestationPayload remote_attestation_payload = 1;
+  // signature on challenge + report + tee_cert
+  bytes  signature = 2;
+}
+
+message RemoteAttestationPayload {
+  string challenge = 1;
+  bytes  report    = 2;
+  bytes  tee_cert  = 3;
+}
