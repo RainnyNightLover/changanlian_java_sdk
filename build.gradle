@@ -65,7 +65,7 @@ dependencies {
 
 test {
     filter {
-//        includeTestsMatching '*'
+        includeTestsMatching '*'
     }
     useJUnitPlatform()
 }

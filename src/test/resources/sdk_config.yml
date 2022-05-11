@@ -4,13 +4,13 @@ chain_client:
   # 组织ID
   org_id: "wx-org1.chainmaker.org"
   # 客户端用户私钥路径
-  user_key_file_path: "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org1.chainmaker.org/user/client1/client1.tls.key"
+  user_key_file_path: "/Users/yangxing/IdeaProjects/sdk-java-changanlian/src/auth_new/cli/enc-pkcs8.key"
   # 客户端用户证书路径
-  user_crt_file_path: "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org1.chainmaker.org/user/client1/client1.tls.crt"
+  user_crt_file_path: "/Users/yangxing/IdeaProjects/sdk-java-changanlian/src/auth_new/cli/enc-cert.pem"
   # 客户端用户交易签名私钥路径
-  user_sign_key_file_path: "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org1.chainmaker.org/user/client1/client1.sign.key"
+  user_sign_key_file_path: "/Users/yangxing/IdeaProjects/sdk-java-changanlian/src/auth_new/cli/sign-pkcs8.key"
   # 客户端用户交易签名证书路径
-  user_sign_crt_file_path: "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org1.chainmaker.org/user/client1/client1.sign.crt"
+  user_sign_crt_file_path: "/Users/yangxing/IdeaProjects/sdk-java-changanlian/src/auth_new/cli/sign-cert.pem"
   # 同步交易结果模式下，轮训获取交易结果时的最大轮训次数，删除此项或设为<=0则使用默认值 10
   retry_limit: 10
   # 同步交易结果模式下，每次轮训交易结果时的等待时间，单位：ms 删除此项或设为<=0则使用默认值 500
@@ -28,8 +28,7 @@ chain_client:
       enable_tls: true
       # 信任证书池路径
       trust_root_paths:
-        - "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org1.chainmaker.org/ca"
-        - "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org2.chainmaker.org/ca"
+        - "/Users/yangxing/IdeaProjects/sdk-java-changanlian/src/auth_new/ca"
       # TLS hostname
       tls_host_name: "chainmaker.org"
     - # 节点地址，格式为：IP:端口:连接数
@@ -38,12 +37,6 @@ chain_client:
       conn_cnt: 10
       # RPC连接是否启用双向TLS认证
       enable_tls: true
-      # 信任证书池路径
-      trust_root_paths:
-        - "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org1.chainmaker.org/ca"
-        - "/root/chainmaker-sdk-java/src/test/resources/crypto-config/wx-org2.chainmaker.org/ca"
-      # TLS hostname
-      tls_host_name: "chainmaker.org"
   archive:
     # 数据归档链外存储相关配置
     type: "mysql"
