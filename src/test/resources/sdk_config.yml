@@ -21,7 +21,7 @@ chain_client:
 
   nodes:
     - # 节点地址，格式为：IP:端口:连接数
-      node_addr: "127.0.0.1:12301"
+      node_addr: "SS:50051"
       # 节点连接数
       conn_cnt: 1
       # RPC连接是否启用双向TLS认证
@@ -30,7 +30,7 @@ chain_client:
       trust_root_paths:
         - "/Users/yangxing/IdeaProjects/sdk-java-changanlian/src/auth_new/ca"
       # TLS hostname
-      tls_host_name: "chainmaker.org"
+      tls_host_name: "SS"
   archive:
     # 数据归档链外存储相关配置
     type: "mysql"
