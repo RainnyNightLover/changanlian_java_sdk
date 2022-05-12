@@ -10,8 +10,10 @@ import com.alibaba.fastjson.JSON;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.stub.StreamObserver;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
@@ -147,12 +149,12 @@ public class ChainClient {
     private static final Logger logger = LoggerFactory.getLogger(ChainClient.class);
 
     private static final String KEY_GASPUBLIC = "public_key";
-    private static final String KEY_GASADDRESSKEY       = "address_key";
+    private static final String KEY_GASADDRESSKEY = "address_key";
     private static final String Key_GASBATCHRECHARGE = "batch_recharge";
     private static final String Key_GASBALANCEPUBLICKEY = "balance_public_key";
-    private static final String Key_GASCHARGEPUBLICKEY  = "charge_public_key";
-    private static final String Key_GASCHARGEGASAMOUNT  = "charge_gas_amount";
-    private static final String Key_GASFROZENPUBLICKEY  = "frozen_public_key";
+    private static final String Key_GASCHARGEPUBLICKEY = "charge_public_key";
+    private static final String Key_GASCHARGEGASAMOUNT = "charge_gas_amount";
+    private static final String Key_GASFROZENPUBLICKEY = "frozen_public_key";
 
     public synchronized boolean enableAlias() throws ChainMakerCryptoSuiteException,
             ChainClientException {
@@ -176,7 +178,7 @@ public class ChainClient {
             }
         }
 
-        return  false;
+        return false;
     }
 
     // enable cert hash instead full cert to identify sender when sending transaction to chain node
@@ -214,7 +216,7 @@ public class ChainClient {
         ResultOuterClass.TxResponse responseInfo = addCert(DEFAULT_RPC_TIMEOUT);
 
         if (responseInfo == null || responseInfo.getCode() != ResultOuterClass.TxStatusCode.SUCCESS
-            || responseInfo.getContractResult().getCode() != SUCCESS) {
+                || responseInfo.getContractResult().getCode() != SUCCESS) {
             throw new ChainClientException("add cert failed");
         }
         // check cert hash
@@ -287,6 +289,7 @@ public class ChainClient {
         }
         return certInfos.getCertInfos(0).getHash().equals(ByteUtils.toHexString(certHash));
     }
+
     private boolean getCheckAlias() throws ChainClientException, ChainMakerCryptoSuiteException {
         ResultOuterClass.AliasInfos aliasInfos = queryAlias(new String[]{clientUser.getAlias()}, DEFAULT_RPC_TIMEOUT);
         if (aliasInfos == null) {
@@ -322,8 +325,8 @@ public class ChainClient {
     //   - runtimeType: 合约运行环境
     //   - params: 合约初始化参数
     public Request.Payload createContractUpgradePayload(String contractName, String version, byte[] byteCode,
-                                                       ContractOuterClass.RuntimeType runtime,
-                                                       Map<String, byte[]> params)
+                                                        ContractOuterClass.RuntimeType runtime,
+                                                        Map<String, byte[]> params)
             throws ChainMakerCryptoSuiteException {
 
         return createContractManageWithByteCodePayload(contractName,
@@ -336,7 +339,7 @@ public class ChainClient {
     //   - contractName: 合约名
     public Request.Payload createContractFreezePayload(String contractName) throws ChainMakerCryptoSuiteException {
         return createContractManagePayload(contractName,
-                                           ContractManage.ContractManageFunction.FREEZE_CONTRACT.toString());
+                ContractManage.ContractManageFunction.FREEZE_CONTRACT.toString());
     }
 
     // ### 1.4 创建解冻合约payload
@@ -344,7 +347,7 @@ public class ChainClient {
     //   - contractName: 合约名
     public Request.Payload createContractUnFreezePayload(String contractName) throws ChainMakerCryptoSuiteException {
         return createContractManagePayload(contractName,
-                                           ContractManage.ContractManageFunction.UNFREEZE_CONTRACT.toString());
+                ContractManage.ContractManageFunction.UNFREEZE_CONTRACT.toString());
     }
 
     // ### 1.5 创建注销合约payload
@@ -352,7 +355,7 @@ public class ChainClient {
     //   - contractName: 合约名
     public Request.Payload createContractRevokePayload(String contractName) throws ChainMakerCryptoSuiteException {
         return createContractManagePayload(contractName,
-                                           ContractManage.ContractManageFunction.REVOKE_CONTRACT.toString());
+                ContractManage.ContractManageFunction.REVOKE_CONTRACT.toString());
     }
 
     // ### 1.6 发送合约操作请求
@@ -382,7 +385,7 @@ public class ChainClient {
                                                       long rpcCallTimeout, long syncResultTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
         Request.Payload payload = createPayload(txId, Request.TxType.INVOKE_CONTRACT,
-                                                contractName, method, params, DEFAULT_SEQ);
+                contractName, method, params, DEFAULT_SEQ);
         return sendContractRequest(payload, null, rpcCallTimeout, syncResultTimeout);
     }
 
@@ -398,7 +401,7 @@ public class ChainClient {
             throws ChainMakerCryptoSuiteException, ChainClientException {
 
         Request.Payload payload = createPayload(txId, Request.TxType.QUERY_CONTRACT,
-                                                contractName, method, params, DEFAULT_SEQ);
+                contractName, method, params, DEFAULT_SEQ);
         return sendContractRequest(payload, null, rpcCallTimeout, -1);
     }
 
@@ -712,8 +715,8 @@ public class ChainClient {
     //   - params: 执行参数
     //   - rpcCallTimeout: 调用rcp接口超时时间, 单位：毫秒
     //   - syncResultTimeout: 同步获取执行结果超时时间，小于等于0代表不等待执行结果，直接返回（返回信息里包含交易ID），单位：毫秒
-    public ResultOuterClass.TxResponse invokeSystemContract(String contractName, String method, String txId,  Map<String, byte[]> params,
-                                                      long rpcCallTimeout, long syncResultTimeout)
+    public ResultOuterClass.TxResponse invokeSystemContract(String contractName, String method, String txId, Map<String, byte[]> params,
+                                                            long rpcCallTimeout, long syncResultTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
         Request.Payload payload = createPayload(txId, Request.TxType.INVOKE_CONTRACT, contractName, method, params, DEFAULT_SEQ);
         return sendContractRequest(payload, null, rpcCallTimeout, syncResultTimeout);
@@ -727,7 +730,7 @@ public class ChainClient {
     //   - params: 执行参数
     //   - rpcCallTimeout: 调用rcp接口超时时间, 单位：毫秒
     public ResultOuterClass.TxResponse querySystemContract(String contractName, String method, String txId,
-                                                     Map<String, byte[]> params, long rpcCallTimeout)
+                                                           Map<String, byte[]> params, long rpcCallTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
 
         Request.Payload payload = createPayload(txId, Request.TxType.QUERY_CONTRACT, contractName, method, params, DEFAULT_SEQ);
@@ -892,7 +895,7 @@ public class ChainClient {
     //   - blockInterval: 出块间隔，单位:ms，其值范围为[10, +∞]
     //   - rpcCallTimeout: 调用rcp接口超时时间, 单位：毫秒
     public Request.Payload createPayloadOfChainConfigBlockUpdate(boolean txTimestampVerify, int txTimeout, int blockTxCapacity,
-                                                        int blockSize, int blockInterval, int txParamterSize, long rpcCallTimeout)
+                                                                 int blockSize, int blockInterval, int txParamterSize, long rpcCallTimeout)
             throws ChainClientException, ChainMakerCryptoSuiteException {
         if (txTimeout < 600 || blockTxCapacity < 1 || blockSize < 1 || blockInterval < 10) {
             throw new ChainClientException("invalid parameters");
@@ -966,7 +969,7 @@ public class ChainClient {
     //   - principle: 权限规则
     //   - rpcCallTimeout: 调用rcp接口超时时间, 单位：毫秒
     public Request.Payload createPayloadOfChainConfigPermissionAdd(String permissionResourceName,
-                                                          PolicyOuterClass.Policy principal, long rpcCallTimeout)
+                                                                   PolicyOuterClass.Policy principal, long rpcCallTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
         long sequence = getChainConfigSequence(rpcCallTimeout);
         Map<String, byte[]> params = new HashMap<>();
@@ -982,7 +985,7 @@ public class ChainClient {
     //   - principle: 权限规则
     //   - rpcCallTimeout: 调用rcp接口超时时间, 单位：毫秒
     public Request.Payload createPayloadOfChainConfigPermissionUpdate(String permissionResourceName,
-                                                             PolicyOuterClass.Policy principal, long rpcCallTimeout)
+                                                                      PolicyOuterClass.Policy principal, long rpcCallTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
 
         long sequence = getChainConfigSequence(rpcCallTimeout);
@@ -1033,7 +1036,7 @@ public class ChainClient {
     //   - nodeNewAddress: 节点新地址
     //   - rpcCallTimeout: 调用rcp接口超时时间, 单位：毫秒
     public Request.Payload createPayloadOfChainConfigConsensusNodeAddrUpdate(String nodeOrgId, String nodeOldAddress,
-                                                                    String nodeNewAddress, long rpcCallTimeout)
+                                                                             String nodeNewAddress, long rpcCallTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
         long sequence = getChainConfigSequence(rpcCallTimeout);
         Map<String, byte[]> params = new HashMap<>();
@@ -1112,7 +1115,7 @@ public class ChainClient {
     //   - params: Map<String, byte[]>
     //   - rpcCallTimeout: 调用rcp接口超时时间, 单位：毫秒
     public Request.Payload createPayloadOfChainConfigConsensusExtAdd(Map<String, byte[]> params, long rpcCallTimeout)
-            throws  ChainMakerCryptoSuiteException, ChainClientException {
+            throws ChainMakerCryptoSuiteException, ChainClientException {
 
         long sequence = getChainConfigSequence(rpcCallTimeout);
         return createPayload("", Request.TxType.INVOKE_CONTRACT, SystemContract.CHAIN_CONFIG.toString(),
@@ -1123,7 +1126,7 @@ public class ChainClient {
     // **参数说明**
     //   - params: Map<String, byte[]>
     public Request.Payload createPayloadOfChainConfigConsensusExtUpdate(Map<String, byte[]> params, long rpcCallTimeout)
-            throws  ChainMakerCryptoSuiteException, ChainClientException {
+            throws ChainMakerCryptoSuiteException, ChainClientException {
         long sequence = getChainConfigSequence(rpcCallTimeout);
         return createPayload("", Request.TxType.INVOKE_CONTRACT, SystemContract.CHAIN_CONFIG.toString(),
                 ChainConfig.ChainConfigFunction.CONSENSUS_EXT_UPDATE.toString(), params, sequence + 1);
@@ -1183,7 +1186,7 @@ public class ChainClient {
 
     // ### 3.23 发送链配置更新请求
     public ResultOuterClass.TxResponse updateChainConfig(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
-                                          long rpcCallTimeout, long syncResultTimeout)
+                                                         long rpcCallTimeout, long syncResultTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
         return sendContractRequest(payload, endorsementEntries, rpcCallTimeout, syncResultTimeout);
     }
@@ -1256,7 +1259,7 @@ public class ChainClient {
     // **参数说明**
     //   - - payload: 证书解冻的payload
     public ResultOuterClass.TxResponse unfreezeCerts(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
-                                                   long rpcCallTimeout, long syncResultTimeout)
+                                                     long rpcCallTimeout, long syncResultTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
         return sendContractRequest(payload, endorsementEntries, rpcCallTimeout, syncResultTimeout);
     }
@@ -1265,7 +1268,7 @@ public class ChainClient {
     // **参数说明**
     //   - payload: 证书注销的payload
     public ResultOuterClass.TxResponse revokeCerts(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
-                                                     long rpcCallTimeout, long syncResultTimeout)
+                                                   long rpcCallTimeout, long syncResultTimeout)
             throws ChainMakerCryptoSuiteException, ChainClientException {
         return sendContractRequest(payload, endorsementEntries, rpcCallTimeout, syncResultTimeout);
     }
@@ -1552,7 +1555,7 @@ public class ChainClient {
 
     // ## 9 管理类接口
     // ### 9.1 SDK停止接口：关闭连接池连接，释放资源
-    public void stop()  {
+    public void stop() {
         connectionPool.stop();
     }
 
@@ -1593,7 +1596,7 @@ public class ChainClient {
         ChainMakerVersionRequest.Builder chainMakerVersionRequest = ChainMakerVersionRequest.newBuilder();
 
         try {
-            response = rpcServiceClient.getRpcNodeFutureStub().getChainMakerVersion(chainMakerVersionRequest.build()).get(timeout, TimeUnit.MILLISECONDS);
+            response = rpcServiceClient.getRpcNodeFutureStub().getChainMakerVersion(chainMakerVersionRequest.build()).get(timeout, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error("connect to peer error : ", e);
             throw new ChainClientException("connect to peer error : " + e.getMessage());
@@ -1685,7 +1688,7 @@ public class ChainClient {
         params.put(KEY_GASADDRESSKEY, address.getBytes());
 
         Request.Payload payload = createPayload("", Request.TxType.QUERY_CONTRACT, SystemContract.ACCOUNT_MANAGER.toString(),
-            AccountManager.GasAccountFunction.GET_BALANCE.toString(), params, DEFAULT_SEQ);
+                AccountManager.GasAccountFunction.GET_BALANCE.toString(), params, DEFAULT_SEQ);
         ResultOuterClass.TxResponse resp = proposalRequest(payload, null, rpcCallTimeout);
         checkProposalRequestResp(resp, true);
         return Long.parseLong(resp.getContractResult().getResult().toStringUtf8());
@@ -1697,7 +1700,7 @@ public class ChainClient {
     //   - amount: 退还gas的数量
     public Request.Payload createRefundGasPayload(String address, long amount)
             throws ChainMakerCryptoSuiteException {
-        if(amount <= 0){
+        if (amount <= 0) {
             logger.error("amount must > 0");
         }
         Map<String, byte[]> params = new HashMap<>();
@@ -1762,8 +1765,8 @@ public class ChainClient {
     //            当为true时，若成功调用，common.TxResponse.ContractResult.Result为common.TransactionInfo
     //            当为false时，若成功调用，common.TxResponse.ContractResult为空，可以通过common.TxResponse.TxId查询交易结果
     public ResultOuterClass.TxResponse sendGasManageRequest(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
-                                                long rpcCallTimeout, long syncResultTimeout)
-    throws ChainClientException, ChainMakerCryptoSuiteException {
+                                                            long rpcCallTimeout, long syncResultTimeout)
+            throws ChainClientException, ChainMakerCryptoSuiteException {
         return sendContractRequest(payload, endorsementEntries, rpcCallTimeout, syncResultTimeout);
     }
 
@@ -1782,7 +1785,7 @@ public class ChainClient {
     // **参数说明**
     //   - rpcCallTimeout: 超时时间，单位：s，若传入-1，将使用默认超时时间：10s
     public Request.Payload createChainConfigEnableOrDisableGasPayload(long rpcCallTimeout)
-    throws ChainClientException, ChainMakerCryptoSuiteException {
+            throws ChainClientException, ChainMakerCryptoSuiteException {
         long sequence = getChainConfigSequence(rpcCallTimeout);
         return createPayload("", Request.TxType.INVOKE_CONTRACT, SystemContract.CHAIN_CONFIG.toString(),
                 ChainConfig.ChainConfigFunction.ENABLE_OR_DISABLE_GAS.toString(), null, sequence + 1);
@@ -1827,7 +1830,7 @@ public class ChainClient {
     //   - endorsementEntries: 背书签名信息列表
     //   - rpcCallTimeout: 超时时间，单位：s，若传入-1，将使用默认超时时间：10s
     public ResultOuterClass.TxResponse updateAlias(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
-            long rpcCallTimeout) throws ChainClientException, ChainMakerCryptoSuiteException {
+                                                   long rpcCallTimeout) throws ChainClientException, ChainMakerCryptoSuiteException {
 
         return sendContractRequest(payload, endorsementEntries, rpcCallTimeout, -1);
     }
@@ -1876,7 +1879,7 @@ public class ChainClient {
     //   - rpcCallTimeout: 超时时间，单位：s，若传入-1，将使用默认超时时间：10s
     //   - syncResultTimeout: 是否同步获取交易执行结果
     public ResultOuterClass.TxResponse deleteAlias(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
-            long rpcCallTimeout, long syncResultTimeout) throws ChainClientException, ChainMakerCryptoSuiteException {
+                                                   long rpcCallTimeout, long syncResultTimeout) throws ChainClientException, ChainMakerCryptoSuiteException {
 
         return sendContractRequest(payload, endorsementEntries, rpcCallTimeout, syncResultTimeout);
     }
@@ -2007,7 +2010,7 @@ public class ChainClient {
     }
 
     private Request.Payload createContractManageWithByteCodePayload(String contractName, String method, String version, byte[] byteCode,
-                                                        ContractOuterClass.RuntimeType runtime, Map<String, byte[]> params)
+                                                                    ContractOuterClass.RuntimeType runtime, Map<String, byte[]> params)
             throws ChainMakerCryptoSuiteException {
 
         Request.Payload payload = createPayload("", Request.TxType.INVOKE_CONTRACT,
@@ -2075,7 +2078,7 @@ public class ChainClient {
     private ResultOuterClass.TxResponse sendContractRequest(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
                                                             long rpcCallTimeout, long syncResultTimeout)
             throws ChainClientException, ChainMakerCryptoSuiteException {
-        ResultOuterClass.TxResponse responseInfo  = sendRequest(payload, endorsementEntries, rpcCallTimeout);
+        ResultOuterClass.TxResponse responseInfo = sendRequest(payload, endorsementEntries, rpcCallTimeout);
         ResultOuterClass.TxResponse.Builder responseInfoBuilder = responseInfo.toBuilder();
         if (responseInfo.getCode() == ResultOuterClass.TxStatusCode.SUCCESS) {
             if (syncResultTimeout > 0) {
@@ -2091,7 +2094,7 @@ public class ChainClient {
     }
 
     private ResultOuterClass.TxResponse sendRequest(Request.Payload payload, Request.EndorsementEntry[] endorsementEntries,
-                                      long rpcCallTimeout) throws ChainMakerCryptoSuiteException, ChainClientException {
+                                                    long rpcCallTimeout) throws ChainMakerCryptoSuiteException, ChainClientException {
         return sendTxRequest(createTxRequest(payload, endorsementEntries), rpcCallTimeout);
     }
 
